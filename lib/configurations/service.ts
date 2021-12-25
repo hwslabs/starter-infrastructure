@@ -1,5 +1,5 @@
 export interface Service {
-    server: string,
+    serverConfig: string,
     protocol: string,
     framework: string,
     zoneName: string,

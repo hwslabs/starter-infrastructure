@@ -16,19 +16,19 @@ class CompleteStack extends Stack {
 
         const cache: Cache = {
             name: '{TEMPLATE_SERVICE_HYPHEN_NAME}',
-            replicationId: '{TEMPLATE_SERVICE_HYPHEN_NAME}',
-            clusterConfig: '{TEMPLATE_CACHE_CLUSTER}'
+            id: '{TEMPLATE_SERVICE_HYPHEN_NAME}',
+            cacheConfig: '{TEMPLATE_CACHE_CONFIG}'
         }
 
         const database: Database = {
             name: '{TEMPLATE_SERVICE_UNDERSCORE_NAME}',
-            clusterConfig: '{TEMPLATE_DB_CLUSTER}'
+            databaseConfig: '{TEMPLATE_DB_CONFIG}'
         }
 
         const service: Service = {
             name: '{TEMPLATE_SERVICE_HYPHEN_NAME}',
             protocol: '{TEMPLATE_SERVER_PROTOCOL}',
-            server: '{TEMPLATE_SERVER_INFRA}',
+            serverConfig: '{TEMPLATE_SERVER_CONFIG}',
             framework: '{TEMPLATE_SERVER_FRAMEWORK}',
             zoneName: '{TEMPLATE_AWS_ZONE_NAME}',
             endpoint: '{TEMPLATE_SERVICE_HYPHEN_NAME}.{TEMPLATE_AWS_ZONE_NAME}',
@@ -36,7 +36,7 @@ class CompleteStack extends Stack {
         }
 
         const deployment: Deployment = {
-            deploymentConfig: '{TEMPLATE_DEPLOYMENT_INFRA}',
+            deploymentConfig: '{TEMPLATE_DEPLOYMENT_CONFIG}',
             // slackConfigId: '{TEMPLATE_SERVICE_NAME}',
             // slackConfigName: '{TEMPLATE_SERVICE_HYPHEN_NAME}'
         }
@@ -59,8 +59,8 @@ class CompleteStack extends Stack {
             service,
             networkLayer,
             dataLayer,
-            cacheConf: infraConfig.cache.clusterConfig,
-            dbConf: infraConfig.database.clusterConfig
+            cacheConf: infraConfig.cache.cacheConfig,
+            dbConf: infraConfig.database.databaseConfig
         });
 
         new DeploymentLayer(this, 'CICDLayer', { serviceFactory, deployment });

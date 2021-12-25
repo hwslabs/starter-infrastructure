@@ -20,7 +20,7 @@ export abstract class ServiceFactory {
     abstract addProjectPermissions(project: Project): void
 
     public static instance(service: Service) : ServiceFactory {
-        switch (service.server) {
+        switch (service.serverConfig) {
             case 'Fargate': {
                 return new FargateServiceFactory()
             }
@@ -28,7 +28,7 @@ export abstract class ServiceFactory {
                 return new Ec2ServiceFactory()
             }
             default: {
-                throw new TypeError(`Invalid type ${service.server}`)
+                throw new TypeError(`Invalid type ${service.serverConfig}`)
             }
         }
     }
