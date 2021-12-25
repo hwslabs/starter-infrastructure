@@ -10,7 +10,7 @@ import {CodeDeployServerDeployAction} from "@aws-cdk/aws-codepipeline-actions";
 import {AutoScalingGroup} from "@aws-cdk/aws-autoscaling";
 import {ApplicationTargetGroup} from "@aws-cdk/aws-elasticloadbalancingv2";
 
-export class Ec2ServiceFactory extends ServiceFactory {
+export class Ec2ServiceFactory implements ServiceFactory {
     ec2ServiceLayer: Ec2ServiceLayer
     asg: AutoScalingGroup;
     albTargetGroup: ApplicationTargetGroup;

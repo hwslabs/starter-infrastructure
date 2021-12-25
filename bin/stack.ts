@@ -1,4 +1,4 @@
-import {App, CfnOutput, Construct, Stack, StackProps} from "@aws-cdk/core";
+import {App, Construct, Stack, StackProps} from "@aws-cdk/core";
 import {NetworkLayer} from "../lib/network-layer";
 import {DataLayer} from "../lib/data-layer";
 import {DeploymentLayer} from "../lib/deployment-layer";
@@ -64,11 +64,6 @@ class CompleteStack extends Stack {
         });
 
         new DeploymentLayer(this, 'CICDLayer', { serviceFactory, deployment });
-
-        // Output the dns name of the endpoint
-        new CfnOutput(scope, 'Endpoint', {
-            value: infraConfig.service.endpoint,
-        })
     }
 }
 

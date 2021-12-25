@@ -1,4 +1,4 @@
-import {Construct, Duration} from "@aws-cdk/core";
+import {CfnOutput, Construct, Duration} from "@aws-cdk/core";
 import {Cluster, ContainerImage, IBaseService} from "@aws-cdk/aws-ecs";
 import {DockerImageAsset} from "@aws-cdk/aws-ecr-assets";
 import {ApplicationLoadBalancedFargateService} from "@aws-cdk/aws-ecs-patterns";
@@ -126,5 +126,10 @@ export class FargateServiceLayer extends ServiceLayer {
             scaleInCooldown: Duration.seconds(60),
             scaleOutCooldown: Duration.seconds(60),
         });
+
+        // Output the HTTPS Endpoint
+        new CfnOutput(scope, 'Endpoint', {
+            value: `https://${this.endpoint}`
+        })
     }
 }

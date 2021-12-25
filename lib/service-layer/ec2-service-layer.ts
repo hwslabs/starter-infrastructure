@@ -1,7 +1,7 @@
 import {ServiceLayer, ServiceLayerProps} from "./service-layer";
 import {AutoScalingGroup, HealthCheck} from "@aws-cdk/aws-autoscaling";
 import {ApplicationLoadBalancer, ApplicationTargetGroup} from "@aws-cdk/aws-elasticloadbalancingv2";
-import {Construct, Duration} from "@aws-cdk/core";
+import {CfnOutput, Construct, Duration} from "@aws-cdk/core";
 import {
     AmazonLinuxGeneration,
     InstanceClass,
@@ -120,5 +120,10 @@ export class Ec2ServiceLayer extends ServiceLayer {
             zone: this.domainZone,
             recordName: this.subDomain,
         });
+
+        // Output the HTTPS Endpoint
+        new CfnOutput(scope, 'Endpoint', {
+            value: `https://${this.endpoint}`
+        })
     }
 }

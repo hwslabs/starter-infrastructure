@@ -9,7 +9,7 @@ import {Artifact} from "@aws-cdk/aws-codepipeline";
 import {Action} from "@aws-cdk/aws-codepipeline-actions/lib/action";
 import {EcsDeployAction} from "@aws-cdk/aws-codepipeline-actions";
 
-export class FargateServiceFactory extends ServiceFactory {
+export class FargateServiceFactory implements ServiceFactory {
     fargateServiceLayer: FargateServiceLayer;
     service: IBaseService;
     containerName: string;
