@@ -46,7 +46,7 @@ export class FargateServiceLayer extends ServiceLayer {
         const image = ContainerImage.fromDockerImageAsset(asset);
 
         // Load balanced fargate service
-        if(props.service.framework == 'HTTP') {
+        if(props.service.protocol == 'HTTP') {
             this.lbFargateService = new ApplicationLoadBalancedFargateService(this, 'AlbFargateHTTP', {
                 serviceName: props.service.name,
                 cluster,
@@ -79,7 +79,7 @@ export class FargateServiceLayer extends ServiceLayer {
                 interval: Duration.seconds(10),
                 timeout: Duration.seconds(5),
             });
-        } else if (props.service.framework == 'GRPC') {
+        } else if (props.service.protocol == 'GRPC') {
             this.lbFargateService = new ApplicationLoadBalancedFargateService(this, "AlbFargateGRPC", {
                 serviceName: props.service.name,
                 cluster,
@@ -104,7 +104,7 @@ export class FargateServiceLayer extends ServiceLayer {
                 }
             });
         } else {
-            throw new TypeError(`Invalid framework type ${props.service.framework}`)
+            throw new TypeError(`Unsupported protocol ${props.service.protocol}`)
         }
 
         this.lbFargateService.targetGroup.setAttribute('deregistration_delay.timeout_seconds', '5')
