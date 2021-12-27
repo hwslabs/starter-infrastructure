@@ -3,13 +3,13 @@ import {Construct, RemovalPolicy, SecretValue} from "@aws-cdk/core";
 import {NetworkLayer} from "./network-layer";
 import {InstanceClass, InstanceSize, InstanceType, IVpc, Peer, Port, SecurityGroup, SubnetType} from "@aws-cdk/aws-ec2";
 import {CfnReplicationGroup, CfnSubnetGroup} from "@aws-cdk/aws-elasticache";
-import {Infrastructure} from "./configurations/infra";
 import {Cache} from "./configurations/cache";
 import {Database} from "./configurations/database";
 
 interface DataLayerProps {
-    conf: Infrastructure;
     networkLayer: NetworkLayer;
+    cache: Cache;
+    database: Database;
 }
 
 export class DataLayer extends Construct {
@@ -21,21 +21,22 @@ export class DataLayer extends Construct {
     constructor(scope: Construct, id: string, props: DataLayerProps) {
         super(scope, id);
 
-        const conf = props.conf;
+        const cache = props.cache;
+        const database = props.database;
 
         // Import network resources
         const vpc = props.networkLayer.vpc;
 
         // Create redis cluster
-        if(conf.cache != null) {
-            const redisParams = this.createRedisCluster(vpc, conf.cache);
+        if(cache.cacheConfig == 'Redis') {
+            const redisParams = this.createRedisCluster(vpc, cache);
             this.redisCluster = redisParams.redisCluster;
             this.redisHost = redisParams.redisUrl;
         }
 
-        if(conf.database != null) {
+        if(database.databaseConfig == 'Aurora') {
             // Create DB cluster
-            const dbParams = this.createDbCluster(vpc, conf.database);
+            const dbParams = this.createDbCluster(vpc, database);
             this.dbCluster = dbParams.dbCluster;
             this.dbUrl = dbParams.dbUrl;
         }
@@ -74,7 +75,7 @@ export class DataLayer extends Construct {
         // Create secret from SecretsManager
         const username = 'root';
         // Import password
-        const password = SecretValue.secretsManager(`rds/cluster/${username}/password`);
+        const password = SecretValue.secretsManager(`/${dbConfig.databasePasswordPrefix}/rds/cluster/${username}/password`);
 
         const databaseName = dbConfig.name;
 

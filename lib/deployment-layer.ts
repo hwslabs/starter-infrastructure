@@ -26,13 +26,6 @@ export class DeploymentLayer extends Construct {
     readonly codeStarConnection: CfnConnection;
     readonly useConnectionPolicy: PolicyStatement;
 
-    readonly owner = StringParameter.valueForStringParameter(this, '/code-pipeline/sources/github/user');
-    readonly repo = StringParameter.valueForStringParameter(this, '/code-pipeline/sources/github/repo');
-    readonly branch = StringParameter.valueForStringParameter(this, '/code-pipeline/sources/github/branch');
-    readonly email = StringParameter.valueForStringParameter(this, '/code-pipeline/notifications/email/primary-email');
-    // readonly slackWorkspaceId = StringParameter.valueForStringParameter(this, '/code-pipeline/notifications/slack/workspace-id');
-    // readonly slackChannelId = StringParameter.valueForStringParameter(this, '/code-pipeline/notifications/slack/channel-id');
-
     public readonly pipeline: CodePipeline;
 
     constructor(scope: Construct, id: string, props: CICDLayerProps) {
@@ -64,8 +57,15 @@ export class DeploymentLayer extends Construct {
         const sourceOutput = new Artifact();
         const buildOutput = new Artifact();
 
+        const owner = StringParameter.valueForStringParameter(this, `/${deployment.deploymentParamPrefix}/code-pipeline/sources/github/user`);
+        const repo = StringParameter.valueForStringParameter(this, `/${deployment.deploymentParamPrefix}/code-pipeline/sources/github/repo`);
+        const branch = StringParameter.valueForStringParameter(this, `/${deployment.deploymentParamPrefix}/code-pipeline/sources/github/branch`);
+        const email = StringParameter.valueForStringParameter(this, `/${deployment.deploymentParamPrefix}/code-pipeline/notifications/email/primary-email`);
+        // readonly slackWorkspaceId = StringParameter.valueForStringParameter(this, `/${deployment.deploymentParamPrefix}/code-pipeline/notifications/slack/workspace-id`);
+        // readonly slackChannelId = StringParameter.valueForStringParameter(this, `/${deployment.deploymentParamPrefix}/code-pipeline/notifications/slack/channel-id`);
+
         // Create project and grant it pull push permissions to ECR
-        const project = this.createProject(serviceFactory)
+        const project = this.createProject(serviceFactory, owner, repo, branch)
 
         const manualApprovalTopic = new Topic(this, 'ManualApprovalTopic', {
             displayName: 'CodePipelineManualApprovalTopic'
@@ -73,9 +73,9 @@ export class DeploymentLayer extends Construct {
 
         const codeStarConnectionSourceAction = new CodeStarConnectionsSourceAction({
             actionName: "Source",
-            owner: this.owner,
-            repo: this.repo,
-            branch: this.branch,
+            owner: owner,
+            repo: repo,
+            branch: branch,
             connectionArn: this.codeStarConnection.attrConnectionArn,
             codeBuildCloneOutput: true,
             output: sourceOutput,
@@ -91,7 +91,7 @@ export class DeploymentLayer extends Construct {
         const manualApproval = new ManualApprovalAction({
             actionName: 'Approval',
             notificationTopic: manualApprovalTopic,
-            notifyEmails: [this.email],
+            notifyEmails: [email],
             runOrder: 1
         });
 
@@ -118,8 +118,8 @@ export class DeploymentLayer extends Construct {
         // Add slack channel notification support for pipeline
         // const slackChannel = new SlackChannelConfiguration(this, `${deployment.slackConfigId}Slack`, {
         //     slackChannelConfigurationName: `${deployment.slackConfigName}-automation`,
-        //     slackWorkspaceId: this.slackWorkspaceId,
-        //     slackChannelId: this.slackChannelId,
+        //     slackWorkspaceId: slackWorkspaceId,
+        //     slackChannelId: slackChannelId,
         // });
         // slackChannel.addNotificationTopic(manualApprovalTopic)
         // pipeline.notifyOnExecutionStateChange('NotifyOnExecutionStateChange', slackChannel);
@@ -127,13 +127,13 @@ export class DeploymentLayer extends Construct {
         return pipeline;
     }
 
-    private createProject(serviceFactory: ServiceFactory): Project {
+    private createProject(serviceFactory: ServiceFactory, owner: string, repo: string, branch: string): Project {
         const gitHubSource = Source.gitHub({
-            owner: this.owner,
-            repo: this.repo,
+            owner: owner,
+            repo: repo,
             webhook: true, // optional, default: true if `webhookFilters` were provided, false otherwise
             webhookFilters: [
-                FilterGroup.inEventOf(EventAction.PUSH).andBranchIs(this.branch),
+                FilterGroup.inEventOf(EventAction.PUSH).andBranchIs(branch),
             ], // optional, by default all pushes and Pull Requests will trigger a build
             fetchSubmodules: true
         });

@@ -22,7 +22,8 @@ class CompleteStack extends Stack {
 
         const database: Database = {
             name: '{TEMPLATE_SERVICE_UNDERSCORE_NAME}',
-            databaseConfig: '{TEMPLATE_DB_CONFIG}'
+            databaseConfig: '{TEMPLATE_DB_CONFIG}',
+            databasePasswordPrefix: '{TEMPLATE_SERVICE_HYPHEN_NAME}'
         }
 
         const service: Service = {
@@ -37,6 +38,7 @@ class CompleteStack extends Stack {
 
         const deployment: Deployment = {
             deploymentConfig: '{TEMPLATE_DEPLOYMENT_CONFIG}',
+            deploymentParamPrefix: '{TEMPLATE_SERVICE_HYPHEN_NAME}',
             // slackConfigId: '{TEMPLATE_SERVICE_NAME}',
             // slackConfigName: '{TEMPLATE_SERVICE_HYPHEN_NAME}'
         }
@@ -50,8 +52,9 @@ class CompleteStack extends Stack {
 
         const networkLayer = new NetworkLayer(this, 'NetworkLayer', { conf: infraConfig });
         const dataLayer = new DataLayer(this, 'DataLayer', {
-            conf: infraConfig,
-            networkLayer
+            networkLayer,
+            cache: infraConfig.cache,
+            database: infraConfig.database
         });
 
         const serviceFactory = ServiceFactory.instance(service);
