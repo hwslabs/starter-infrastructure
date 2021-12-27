@@ -75,7 +75,7 @@ export class DataLayer extends Construct {
         // Create secret from SecretsManager
         const username = 'root';
         // Import password
-        const password = SecretValue.secretsManager(`/${dbConfig.databasePasswordPrefix}/rds/cluster/${username}/password`);
+        const password = SecretValue.secretsManager(`/${dbConfig.databasePasswordPrefix}/database/cluster/${username}/password`);
 
         const databaseName = dbConfig.name;
 
