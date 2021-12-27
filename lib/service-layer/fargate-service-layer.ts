@@ -36,7 +36,9 @@ export class FargateServiceLayer extends ServiceLayer {
                 environment['DATABASE_URL'] = props.dataLayer.dbUrl;
             }
         }
-        this.ecrRepo = new Repository(this, 'Repo');
+        this.ecrRepo = new Repository(this, 'Repo', {
+            repositoryName: props.service.repoName
+        });
 
         const cluster = new Cluster(this, 'ECSCluster', {vpc: props.networkLayer.vpc});
 

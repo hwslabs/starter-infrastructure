@@ -30,6 +30,7 @@ class CompleteStack extends Stack {
             name: '{TEMPLATE_SERVICE_HYPHEN_NAME}',
             protocol: '{TEMPLATE_SERVER_PROTOCOL}',
             serverConfig: '{TEMPLATE_SERVER_CONFIG}',
+            repoName: '{TEMPLATE_SERVICE_HYPHEN_NAME}',
             framework: '{TEMPLATE_SERVER_FRAMEWORK}',
             zoneName: '{TEMPLATE_AWS_ZONE_NAME}',
             endpoint: '{TEMPLATE_SERVICE_HYPHEN_NAME}.{TEMPLATE_AWS_ZONE_NAME}',
